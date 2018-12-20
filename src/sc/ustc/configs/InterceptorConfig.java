@@ -8,8 +8,8 @@ package sc.ustc.configs;
  */
 public class InterceptorConfig {
 
-    public static final String INTERCEPTOR_TAG = "interceptorConfig";
-    public static final String INTERCEPTOR_REF_TAG = "interceptorConfig-ref";
+    public static final String INTERCEPTOR_TAG = "interceptor";
+    public static final String INTERCEPTOR_REF_TAG = "interceptor-ref";
 
     private String name;
     private String classpath;

@@ -20,7 +20,6 @@ import java.util.Map;
  */
 public class ActionProxy implements MethodInterceptor {
 
-    private Enhancer enhancer;
     private Class<Action> actionClass;
     private ActionConfig mActionConfig;
     private List<Interceptor> interceptors;
@@ -61,12 +60,12 @@ public class ActionProxy implements MethodInterceptor {
      */
     public String execute(String methodName, Map<String, String[]> params) {
         // Enhancer来做代理
-        enhancer = new Enhancer();
+        Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(actionClass);
         enhancer.setCallback(this);
         Object object = enhancer.create();
 
-        // 给Action的成员变量赋值
+        // 给代理对象成员变量赋值
         Field[] fields = actionClass.getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
@@ -77,7 +76,7 @@ public class ActionProxy implements MethodInterceptor {
             }
         }
 
-        // 调用Action中的处理方法
+        // 调用代理对象中的处理方法
         Method method;
         String resultName = "";
         try {
@@ -91,6 +90,7 @@ public class ActionProxy implements MethodInterceptor {
 
 
     /**
+     *
      *
      * @param o      cglib生成的代理对象
      * @param method 被代理的实体类方法

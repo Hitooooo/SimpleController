@@ -22,21 +22,12 @@ public class ControllerParseHandler extends DefaultHandler {
     private ActionConfig tempActionConfig;
     private ResultConfig resultConfig;
     private InterceptorConfig interceptorConfig;
-    private String interceptor_ref;
+    private String interceptorRef;
 
     public ActionConfig getAction(String actionName) {
         for (ActionConfig actionConfig : actionConfigs) {
             if (actionName.contains(actionConfig.getName())) {
                 return actionConfig;
-            }
-        }
-        return null;
-    }
-
-    public InterceptorConfig getInterceptorConfig(String interceptorName) {
-        for (InterceptorConfig config : interceptorConfigs) {
-            if (ScHelper.equals(config.getName(), interceptorName)) {
-                return config;
             }
         }
         return null;
@@ -74,7 +65,7 @@ public class ControllerParseHandler extends DefaultHandler {
                 break;
             case InterceptorConfig.INTERCEPTOR_REF_TAG:
                 //开始解析Action内部的拦截器配置
-                interceptor_ref = attributes.getValue(0);
+                interceptorRef = attributes.getValue(0);
                 break;
             default:
                 break;
@@ -99,11 +90,11 @@ public class ControllerParseHandler extends DefaultHandler {
                 break;
             case InterceptorConfig.INTERCEPTOR_REF_TAG:
                 for (InterceptorConfig config : interceptorConfigs) {
-                    if (ScHelper.equals(config.getName(), interceptor_ref)) {
+                    if (ScHelper.equals(config.getName(), interceptorRef)) {
                         tempActionConfig.addInterceptor(config);
                     }
                 }
-                interceptor_ref = null;
+                interceptorRef = null;
                 break;
             default:
                 break;

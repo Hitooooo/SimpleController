@@ -10,7 +10,7 @@ public class ResultConfig {
 
     public static final String RESULT_TAG = "result";
 
-    public static final String FORWORD_TYPE = "forward";
+    public static final String FORWARD_TAG = "forward";
 
     public static final String REDIRECT_TYPE = "redirect";
 

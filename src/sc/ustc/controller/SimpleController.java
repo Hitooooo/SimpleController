@@ -3,7 +3,6 @@ package sc.ustc.controller;
 import sc.ustc.configs.ActionConfig;
 import sc.ustc.configs.ResultConfig;
 import sc.ustc.helpers.ScHelper;
-import sc.ustc.proxy.ActionInvocationProxy;
 import sc.ustc.proxy.ActionProxy;
 
 import javax.servlet.ServletException;
@@ -12,10 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 /**
  * @author HitoM
@@ -42,17 +37,6 @@ public class SimpleController extends HttpServlet {
             noActionOrResult("不可识别的Action请求！", resp);
         } else {
             try {
-                // 通过反射的方法，为具体的Action中的字段赋值，调用响应处理方法并获取其处理结果
-                /*Class actionClass = Class.forName(actionConfig.getClassPath());
-                Action actionObject = (Action) actionClass.newInstance();
-                Field[] fields = actionClass.getDeclaredFields();
-                for (Field field : fields) {
-                    field.setAccessible(true);
-                    field.set(actionObject, req.getParameter(field.getName()));
-                }
-                Method method = actionClass.getDeclaredMethod(actionConfig.getMethod());
-                String resultName = (String) method.invoke(actionObject);*/
-
                 ActionProxy proxy = new ActionProxy(actionConfig);
                 String resultName = proxy.execute(actionConfig.getMethod(), req.getParameterMap());
 
@@ -62,8 +46,7 @@ public class SimpleController extends HttpServlet {
                     noActionOrResult("没有请求的资源", resp);
                 } else {
                     String newURL = resultConfig.getValue();
-
-                    if (ResultConfig.FORWORD_TYPE.equals(resultConfig.getType())) {
+                    if (ResultConfig.FORWARD_TAG.equals(resultConfig.getType())) {
                         req.getRequestDispatcher(newURL).forward(req, resp);
                     } else if (ResultConfig.REDIRECT_TYPE.equals(resultConfig.getType())) {
                         resp.sendRedirect(newURL);
