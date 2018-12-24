@@ -1,8 +1,10 @@
 package sc.ustc.helpers;
 
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 import sc.ustc.configs.ActionConfig;
 
+import javax.servlet.ServletContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -21,16 +23,32 @@ public class ScHelper {
 
     /**
      * @param actionName actionName from url
-     * @param stream     a controller xml path
      * @return a new instance of Action
      */
-    public static ActionConfig findAction(String actionName, InputStream stream) {
+    public static ActionConfig findAction(String actionName, String path, ServletContext
+            servletContext) {
+        return getXMLHandler(new ControllerParseHandler(), path, servletContext).getAction(actionName);
+    }
+
+    public static String getHtml(String path, ServletContext servletContext) {
+        return getXMLHandler(new ViewParseHandler(),path,servletContext).getView().getHtmlView();
+    }
+
+    public static boolean isEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
+
+    public static boolean equals(String s1, String s2) {
+        return s1 != null && s1.equals(s2);
+    }
+
+    private static <T extends DefaultHandler> T getXMLHandler(T handler, String path, ServletContext
+            servletContext) {
         if (factory == null) {
             factory = SAXParserFactory.newInstance();
         }
-
+        InputStream stream = servletContext.getResourceAsStream(path);
         SAXParser parser = null;
-        ControllerParseHandler handler = new ControllerParseHandler();
         if (stream != null) {
             try {
                 parser = factory.newSAXParser();
@@ -48,14 +66,6 @@ public class ScHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return handler.getAction(actionName);
-    }
-
-    public static boolean isEmpty(String str) {
-        return str == null || str.isEmpty();
-    }
-
-    public static boolean equals(String s1, String s2) {
-        return s1 != null && s1.equals(s2);
+        return handler;
     }
 }
